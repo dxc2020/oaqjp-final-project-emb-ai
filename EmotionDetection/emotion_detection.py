@@ -16,17 +16,16 @@ def emotion_detector(text_to_analyze):
         result['dominant_emotion'] = None
     else:
         formatted_response = json.loads(response.text)
-        try:
-            prediction = formatted_response['emotionPredictions'][0]
-            result['anger'] = prediction['emotion']['anger']
-            result['disgust'] = prediction['emotion']['disgust']
-            result['fear'] = prediction['emotion']['fear']
-            result['joy'] = prediction['emotion']['joy']
-            result['sadness'] = prediction['emotion']['sadness']    
-            dominant_emotion_score = 0.0
-            for key, value in result.items():        
-                if dominant_emotion_score < value:
-                    dominant_emotion_score = value
-                    dominant_emotion = key        
-            result['dominant_emotion'] = dominant_emotion
+        prediction = formatted_response['emotionPredictions'][0]
+        result['anger'] = prediction['emotion']['anger']
+        result['disgust'] = prediction['emotion']['disgust']
+        result['fear'] = prediction['emotion']['fear']
+        result['joy'] = prediction['emotion']['joy']
+        result['sadness'] = prediction['emotion']['sadness']    
+        dominant_emotion_score = 0.0
+        for key, value in result.items():        
+            if dominant_emotion_score < value:
+                dominant_emotion_score = value
+                dominant_emotion = key        
+        result['dominant_emotion'] = dominant_emotion
     return result
