@@ -6,18 +6,27 @@ def emotion_detector(text_to_analyze):
     headers = {"grpc-metadata-mm-model-id": "emotion_aggregated-workflow_lang_en_stock"}
     myobj = { "raw_document": { "text": text_to_analyze } }
     response = requests.post(url, json = myobj, headers = headers)
-    formatted_response = json.loads(response.text)
-    prediction = formatted_response['emotionPredictions'][0]
     result = dict()
-    result['anger'] = prediction['emotion']['anger']
-    result['disgust'] = prediction['emotion']['disgust']
-    result['fear'] = prediction['emotion']['fear']
-    result['joy'] = prediction['emotion']['joy']
-    result['sadness'] = prediction['emotion']['sadness']    
-    dominant_emotion_score = 0.0
-    for key, value in result.items():        
-        if dominant_emotion_score < value:
-            dominant_emotion_score = value
-            dominant_emotion = key        
-    result['dominant_emotion'] = dominant_emotion
+    if response.status_code == 400:
+        result['anger'] = None
+        result['disgust'] = None
+        result['fear'] = None
+        result['joy'] = None
+        result['sadness'] = None
+        result['dominant_emotion'] = None
+    else:
+        formatted_response = json.loads(response.text)
+        try:
+            prediction = formatted_response['emotionPredictions'][0]
+            result['anger'] = prediction['emotion']['anger']
+            result['disgust'] = prediction['emotion']['disgust']
+            result['fear'] = prediction['emotion']['fear']
+            result['joy'] = prediction['emotion']['joy']
+            result['sadness'] = prediction['emotion']['sadness']    
+            dominant_emotion_score = 0.0
+            for key, value in result.items():        
+                if dominant_emotion_score < value:
+                    dominant_emotion_score = value
+                    dominant_emotion = key        
+            result['dominant_emotion'] = dominant_emotion
     return result
